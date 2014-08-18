@@ -1,8 +1,4 @@
-# Glue code to use Pashua from Tcl. Pashua is a Mac OS X
-# application for generating native Aqua GUIs from scripting
-# languages: http://www.bluem.net/downloads/pashua_en/
-# This Tcl code was contributed by Bruce M. Axtens.
-# Additional improvements / changes by Carsten Bluem
+# Glue code to use Pashua from Tcl
 proc pashua_run {script {encoding ""} {path ""}} {
 
 	upvar #0 argv0 appName
