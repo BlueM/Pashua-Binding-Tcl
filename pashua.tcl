@@ -1,17 +1,12 @@
-# Glue code to use Pashua from Tcl
-proc pashua_run {script {path ""}} {
+# Tries to find the filesystem path to the executable
+# in the Pashua.app application bundle
+proc find_pashua {{path ""}} {
 
 	upvar #0 argv0 appName
 	upvar #0 env   envir
 
-	set tempFile [exec /usr/bin/mktemp /tmp/Pashua_XXXXXXXX]
-	set handle [open $tempFile w]
-	puts $handle $script
-	close $handle
-	
-	# Search for Pashua binary
 	set bundlePath "Pashua.app/Contents/MacOS/Pashua"
-	set theHome $envir(HOME)
+	set homeDir $envir(HOME)
 	set theList [list "$appName/Pashua" \
 		"$appName/$bundlePath" \
 		"/$bundlePath" \
@@ -19,7 +14,7 @@ proc pashua_run {script {path ""}} {
 		"[file dirname [info script]]/$bundlePath" \
 		"./$bundlePath" \
 		"/Applications/$bundlePath" \
-		"$theHome/Applications/$bundlePath" ]
+		"$homeDir/Applications/$bundlePath" ]
 
 	if {$path != ""} {
 		# Prepend $path to the list of search paths
@@ -30,11 +25,23 @@ proc pashua_run {script {path ""}} {
 	foreach possib $theList {
 		if {[file exists $possib]} then {
 			if {[file executable $possib]} then {
-				set theBinary $possib
-				break
+				return $possib
 			}
 		}
 	}
+
+	return ""
+}
+
+# Displays a Pashua dialog with the given configuration
+proc pashua_run {script {path ""}} {
+
+	set tempFile [exec /usr/bin/mktemp /tmp/Pashua_XXXXXXXX]
+	set handle [open $tempFile w]
+	puts $handle $script
+	close $handle
+
+	set theBinary [find_pashua $path]
 
 	if {$theBinary != ""} {
 		set handle [open "|\"$theBinary\" $tempFile" r]
@@ -48,9 +55,7 @@ proc pashua_run {script {path ""}} {
 			}
 		}
 		return [array get results]
-		
-	} else {
-		return ""
 	}
 
+	return ""
 }
