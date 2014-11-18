@@ -89,7 +89,7 @@ if {[file exists $bgimg]} then {
 	append config "bg.type = image\nbg.x = 30\nbg.y = 2\nbg.path = $bgimg\n";
 }
 
-set res [pashua_run $config utf8]
+set res [pashua_run $config]
 
 array set x $res
 if {$x(cb)==1} then {

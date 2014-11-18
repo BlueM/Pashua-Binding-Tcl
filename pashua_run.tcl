@@ -1,5 +1,5 @@
 # Glue code to use Pashua from Tcl
-proc pashua_run {script {encoding ""} {path ""}} {
+proc pashua_run {script {path ""}} {
 
 	upvar #0 argv0 appName
 	upvar #0 env   envir
@@ -26,11 +26,6 @@ proc pashua_run {script {encoding ""} {path ""}} {
 		set theList [linsert $theList 0 "$path/$bundlePath"]
 	}
 
-	if {$encoding != ""} {
-		# Set encoding argument
-		set encoding "-e $encoding"
-	}
-
 	set theBinary ""
 	foreach possib $theList {
 		if {[file exists $possib]} then {
@@ -42,7 +37,7 @@ proc pashua_run {script {encoding ""} {path ""}} {
 	}
 
 	if {$theBinary != ""} {
-		set handle [open "|\"$theBinary\" $encoding $tempFile" r]
+		set handle [open "|\"$theBinary\" $tempFile" r]
 		while {[eof $handle]==0} {
 			gets $handle theLine
 			set equals [string first {=} $theLine]
